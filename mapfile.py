@@ -8,7 +8,7 @@ import sys
 class MapFileParser:
     @staticmethod
     def handle_preferred_load_addr(data, mf):
-        regex = re.compile('Preferred load address is ([0-9]{16})')
+        regex = re.compile('Preferred load address is ([0-9]{8,16})')
         group = re.search(regex, data[0])
         mf.preferred_load_addr = int(group.group(1), 16)
         return 2  # advance by two lines
@@ -41,11 +41,11 @@ class MapFileParser:
         # advance past header
         data = data[2:]
         index = 0
-        regex = re.compile('([0-9a-fA-F]{4}):'      # section index
-                           '([0-9a-fA-F]{8})\s+'    # offset within section
-                           '(.+)\s+'                # symbol name
-                           '([0-9a-fA-F]{16})\s+'   # rva+base
-                           '(.+)'                   # cruft + object file
+        regex = re.compile('([0-9a-fA-F]{4}):'       # section index
+                           '([0-9a-fA-F]{8})\s+'     # offset within section
+                           '(.+)\s+'                 # symbol name
+                           '([0-9a-fA-F]{8,16})\s+'  # rva+base
+                           '(.+)'                    # cruft + object file
                            )
         while index < len(data) and \
                 len(data[index]) != 0 and \
@@ -139,7 +139,7 @@ class MapFile(object):
 
 def parse_mapfile(mapfile, show_skipped_sections=False):
     handlers = [
-        ('Preferred load address is ([0-9]{16})',
+        ('Preferred load address is ([0-9]{8,16})',
             MapFileParser.handle_preferred_load_addr),
         ('Start\s+Length\s+Name\s+Class',
             MapFileParser.handle_sections),
