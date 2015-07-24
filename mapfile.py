@@ -137,7 +137,7 @@ class MapFile(object):
         return symbol.rva_base - self.preferred_load_addr
 
 
-def parse_mapfile(mapfile, show_skipped_sections=False):
+def parse(mapfile, show_skipped_sections=False):
     handlers = [
         ('Preferred load address is ([0-9]{8,16})',
             MapFileParser.handle_preferred_load_addr),
@@ -195,6 +195,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # read file content from mapfile
-    mapfile = parse_mapfile(args.mapfile, True)
+    mapfile = parse(args.mapfile, True)
 
     print str(mapfile)
